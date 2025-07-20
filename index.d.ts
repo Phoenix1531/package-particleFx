@@ -1,5 +1,5 @@
 
-declare module 'package-pariclefx' {
+declare module 'package-particlefx' {
   /**
    * Options for configuring the particle canvas.
    */
