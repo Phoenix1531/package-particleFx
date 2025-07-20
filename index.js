@@ -12,7 +12,7 @@ class ParticleCanvas {
         this.img = new Image();
 
         // Default configuration
-        this.config = {
+        const defaultConfig = {
             particleGap: 4,
             mouseForce: 30,
             gravity: 0.08,
@@ -26,6 +26,8 @@ class ParticleCanvas {
             particleShape: 'square',
             vortexMode: false,
         };
+
+        this.config = { ...defaultConfig, ...options };
 
         this.init();
     }
