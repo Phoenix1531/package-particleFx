@@ -218,7 +218,7 @@ Controls the animation loop manually.
 
 ## License
 
-ISC © Anmol Singh
+MIT © Anmol Singh
 
 ## Contributing
 
