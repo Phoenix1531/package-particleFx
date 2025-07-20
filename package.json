@@ -1,6 +1,6 @@
 {
   "name": "package-particlefx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight, framework-agnostic JavaScript library that renders interactive particle-based image hover effects using HTML5 canvas. Customize particle behavior with options like gravity, noise, mouse force, and more. Easily integrate into React, Vue, or plain HTML projects by passing a DOM container element.",
   "main": "index.js",
   "module": "index.js",
