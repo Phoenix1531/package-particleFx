@@ -1,4 +1,4 @@
-# package-pariclefx
+# package-particlefx
 
 A lightweight, framework-agnostic JavaScript library that renders interactive particle-based image hover effects using canvas. Customize particle behavior with extensive options for physics, visual effects, and user interaction. Easily integrate into React, Vue, or plain HTML projects by passing a DOM container element.
 
