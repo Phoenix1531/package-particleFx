@@ -17,14 +17,14 @@ A lightweight, framework-agnostic JavaScript library that renders interactive pa
 ## Installation
 
 ```bash
-npm install package-pariclefx
+npm install package-particlefx
 ```
 
 ## Quick Start
 
 ### Vanilla JavaScript
 ```javascript
-import { createParticleCanvas } from 'package-pariclefx';
+import { createParticleCanvas } from 'package-particlefx';
 
 const container = document.getElementById('my-container');
 const particleCanvas = createParticleCanvas(container, {
@@ -46,7 +46,7 @@ particleCanvas.downloadImage('my-particle-art.png'); // New: Download the canvas
 ### React
 ```jsx
 import React, { useRef, useEffect, useState } from 'react';
-import { createParticleCanvas } from 'package-pariclefx';
+import { createParticleCanvas } from 'package-particlefx';
 
 function ParticleComponent() {
   const containerRef = useRef(null);
@@ -111,7 +111,7 @@ export default ParticleComponent;
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { createParticleCanvas } from 'package-pariclefx';
+import { createParticleCanvas } from 'package-particlefx';
 
 const container = ref(null);
 let particleCanvas = null;
