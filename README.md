@@ -31,10 +31,6 @@ const particleCanvas = createParticleCanvas(container, {
   imageSrc: 'path/to/your/image.jpg',
   width: 600,
   height: 400,
-  particleGap: 3,
-  mouseForce: 50,
-  filter: 'sepia', // New: Apply a sepia filter
-  particleShape: 'circle', // New: Use circular particles
 });
 
 // Control the animation
@@ -53,10 +49,6 @@ function ParticleComponent() {
   const particleCanvasRef = useRef(null);
   const [config, setConfig] = useState({
     imageSrc: '/my-image.png',
-    particleGap: 4,
-    mouseForce: 30,
-    hueRotation: 180, // New: Rotate hue by 180 degrees
-    vortexMode: true, // New: Enable vortex interaction
   });
 
   useEffect(() => {
