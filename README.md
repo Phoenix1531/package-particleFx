@@ -2,6 +2,16 @@
 
 A lightweight, framework-agnostic JavaScript library that renders interactive particle-based image hover effects using canvas. Customize particle behavior with extensive options for physics, visual effects, and user interaction. Easily integrate into React, Vue, or plain HTML projects by passing a DOM container element.
 
+## What's New in 2.0.0
+
+- **Responsive Units**: `width` and `height` now accept responsive units like `'100vw'`, `'80vh'`, or `'50%'`.
+- **Presets**: Quickly apply stunning visual styles with pre-configured presets like `'fireworks'`, `'snow'`, `'galaxy'`, and `'rain'`.
+- **New Default Image**: A vibrant, dynamically generated placeholder image is now used by default.
+- **Improved Mouse Detection**: Replaced `mouseout` with `mouseleave` for more reliable event handling.
+
+**Breaking Changes:**
+- The `unit` option has been removed. Instead, specify units directly in the `width` and `height` properties (e.g., `width: '100vw'`).
+
 ## Features
 
 -  **Image-to-Particles**: Convert any image into animated particles
@@ -28,15 +38,15 @@ import { createParticleCanvas } from 'package-particlefx';
 
 const container = document.getElementById('my-container');
 const particleCanvas = createParticleCanvas(container, {
-  imageSrc: 'path/to/your/image.jpg',
-  width: 600,
-  height: 400,
+  preset: 'fireworks', // Use a preset for a quick start
+  width: '100vw',      // Responsive width
+  height: '100vh',     // Responsive height
 });
 
 // Control the animation
 particleCanvas.explodeParticles();
 particleCanvas.resetParticles();
-particleCanvas.downloadImage('my-particle-art.png'); // New: Download the canvas
+particleCanvas.downloadImage('my-particle-art.png');
 ```
 
 ### React
@@ -48,7 +58,9 @@ function ParticleComponent() {
   const containerRef = useRef(null);
   const particleCanvasRef = useRef(null);
   const [config, setConfig] = useState({
-    imageSrc: '/my-image.png',
+    preset: 'galaxy',
+    width: '100%',
+    height: '400px',
   });
 
   useEffect(() => {
@@ -59,7 +71,7 @@ function ParticleComponent() {
     return () => {
       particleCanvasRef.current?.destroy();
     };
-  }, [config]); // Re-initialize when config changes
+  }, [config]);
 
   const handleExplode = () => {
     particleCanvasRef.current?.explodeParticles();
@@ -75,13 +87,12 @@ function ParticleComponent() {
 
   return (
     <div>
-      <div ref={containerRef} style={{ width: '500px', height: '300px' }} />
+      <div ref={containerRef} style={{ width: '100%', height: '400px' }} />
       <button onClick={handleExplode}>Explode</button>
       <button onClick={handleReset}>Reset</button>
       <button onClick={handleDownload}>Download</button>
-      {/* Example of dynamically updating config */}
-      <button onClick={() => setConfig(prev => ({ ...prev, vortexMode: !prev.vortexMode }))}>
-        Toggle Vortex Mode
+      <button onClick={() => setConfig(prev => ({ ...prev, preset: 'snow' }))}>
+        Change to Snow
       </button>
     </div>
   );
@@ -90,59 +101,23 @@ function ParticleComponent() {
 export default ParticleComponent;
 ```
 
-### Vue 3
-```vue
-<template>
-  <div>
-    <div ref="container" style="width: 500px; height: 300px;"></div>
-    <button @click="explode">Explode</button>
-    <button @click="reset">Reset</button>
-    <button @click="download">Download</button>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { createParticleCanvas } from 'package-particlefx';
-
-const container = ref(null);
-let particleCanvas = null;
-
-onMounted(() => {
-  particleCanvas = createParticleCanvas(container.value, {
-    imageSrc: '/my-image.png',
-    width: 500,
-    height: 300,
-    filter: 'invert', // New: Invert colors
-  });
-});
-
-onUnmounted(() => {
-  particleCanvas?.destroy();
-});
-
-const explode = () => particleCanvas?.explodeParticles();
-const reset = () => particleCanvas?.resetParticles();
-const download = () => particleCanvas?.downloadImage(); // New: Download image
-</script>
-```
-
 ## Configuration Options
 
 | Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `imageSrc` | string | Built-in gradient | Path or data URL of the image to convert |
-| `width` | number | 400 | Canvas width in pixels |
-| `height` | number | 400 | Canvas height in pixels |
-| `particleGap` | number | 4 | Spacing between particles (lower = more particles) |
-| `mouseForce` | number | 30 | Strength of mouse repulsion effect |
-| `gravity` | number | 0.08 | Force pulling particles back to origin |
-| `noise` | number | 10 | Random movement applied to particles |
-| `clickStrength` | number | 100 | Force applied when clicking on canvas |
-| `hueRotation` | number | 0 | Rotates the hue of particle colors (0-360 degrees) |
-| `filter` | 'none' \| 'grayscale' \| 'sepia' \| 'invert' | 'none' | Applies a color filter to particles |
-| `particleShape` | 'square' \| 'circle' \| 'triangle' | 'square' | Shape of individual particles |
-| `vortexMode` | boolean | false | If true, clicks create a vortex effect instead of a ripple |
+|---|---|---|---|
+| `preset` | 'fireworks' \| 'snow' \| 'galaxy' \| 'rain' | `undefined` | Applies a pre-configured set of options. |
+| `imageSrc` | string | Built-in gradient | Path or data URL of the image to convert. |
+| `width` | number \| string | 400 | Canvas width in pixels or a string with units (e.g., `'100vw'`). |
+| `height` | number \| string | 400 | Canvas height in pixels or a string with units (e.g., `'100vh'`). |
+| `particleGap` | number | 4 | Spacing between particles (lower = more particles). |
+| `mouseForce` | number | 30 | Strength of mouse repulsion effect. |
+| `gravity` | number | 0.08 | Force pulling particles back to origin. |
+| `noise` | number | 10 | Random movement applied to particles. |
+| `clickStrength` | number | 100 | Force applied when clicking on canvas. |
+| `hueRotation` | number | 0 | Rotates the hue of particle colors (0-360 degrees). |
+| `filter` | 'none' \| 'grayscale' \| 'sepia' \| 'invert' | 'none' | Applies a color filter to particles. |
+| `particleShape` | 'square' \| 'circle' \| 'triangle' | 'square' | Shape of individual particles. |
+| `vortexMode` | boolean | false | If true, clicks create a vortex effect instead of a ripple. |
 
 ## API Reference
 
@@ -196,10 +171,10 @@ Controls the animation loop manually.
 
 ## Performance Tips
 
-- **Particle Gap**: Higher values (4-8) create fewer particles and better performance
-- **Image Size**: Smaller images process faster during initialization
-- **Canvas Size**: Larger canvases require more computational power
-- **Mobile**: Consider reducing particle count on mobile devices
+- **Particle Gap**: Higher values (4-8) create fewer particles and better performance.
+- **Image Size**: Smaller images process faster during initialization.
+- **Canvas Size**: Larger canvases require more computational power.
+- **Mobile**: Consider reducing particle count on mobile devices.
 
 ## Browser Support
 
