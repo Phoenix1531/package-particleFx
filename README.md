@@ -2,7 +2,7 @@
 
 A lightweight, framework-agnostic JavaScript library that renders interactive particle-based image hover effects using canvas. Customize particle behavior with extensive options for physics, visual effects, and user interaction. Easily integrate into React, Vue, or plain HTML projects by passing a DOM container element.
 
-## What's New in 2.0.0
+## What's New in 1.2.0
 
 - **Responsive Units**: `width` and `height` now accept responsive units like `'100vw'`, `'80vh'`, or `'50%'`.
 - **Presets**: Quickly apply stunning visual styles with pre-configured presets like `'fireworks'`, `'snow'`, `'galaxy'`, and `'rain'`.
