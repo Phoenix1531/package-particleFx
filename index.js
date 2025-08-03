@@ -1,5 +1,6 @@
 
 import { presets } from './presets.js';
+import { createDefaultImage } from './image.js';
 
 class ParticleCanvas {
     constructor(containerElement, options = {}) {
@@ -25,7 +26,7 @@ class ParticleCanvas {
             clickStrength: 100,
             width: 400,
             height: 400,
-            imageSrc: this.createDefaultImage(),
+            imageSrc: createDefaultImage(),
             hueRotation: 0,
             filter: 'none',
             particleShape: 'square',
@@ -35,29 +36,6 @@ class ParticleCanvas {
         this.config = { ...defaultConfig, ...presetConfig, ...options };
 
         this.init();
-    }
-
-    createDefaultImage() {
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        const size = 200;
-        tempCanvas.width = size;
-        tempCanvas.height = size;
-
-        const gradient = tempCtx.createLinearGradient(0, 0, size, size);
-        gradient.addColorStop(0, '#ff0000');
-        gradient.addColorStop(1, '#0000ff');
-
-        tempCtx.fillStyle = gradient;
-        tempCtx.fillRect(0, 0, size, size);
-
-        tempCtx.fillStyle = 'white';
-        tempCtx.font = 'bold 30px Arial';
-        tempCtx.textAlign = 'center';
-        tempCtx.textBaseline = 'middle';
-        tempCtx.fillText('P', size / 2, size / 2);
-
-        return tempCanvas.toDataURL();
     }
 
     init() {
