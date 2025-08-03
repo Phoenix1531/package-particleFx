@@ -9,13 +9,14 @@ declare module 'package-particlefx' {
     gravity?: number;
     noise?: number;
     clickStrength?: number;
-    width?: number;
-    height?: number;
+    width?: number | string;
+    height?: number | string;
     imageSrc?: string;
     hueRotation?: number;
     filter?: 'none' | 'grayscale' | 'sepia' | 'invert';
     particleShape?: 'square' | 'circle' | 'triangle';
     vortexMode?: boolean;
+    preset?: 'fireworks' | 'snow' | 'galaxy' | 'rain';
   }
 
   /**

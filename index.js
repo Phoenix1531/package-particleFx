@@ -1,4 +1,6 @@
 
+import { presets } from './presets.js';
+
 class ParticleCanvas {
     constructor(containerElement, options = {}) {
         this.container = containerElement;
@@ -10,6 +12,9 @@ class ParticleCanvas {
         this.vortex = { x: 0, y: 0, active: false };
         this.animationId = null;
         this.img = new Image();
+
+        const presetName = options.preset;
+        const presetConfig = presets[presetName] || {};
 
         // Default configuration
         const defaultConfig = {
@@ -27,13 +32,32 @@ class ParticleCanvas {
             vortexMode: false,
         };
 
-        this.config = { ...defaultConfig, ...options };
+        this.config = { ...defaultConfig, ...presetConfig, ...options };
 
         this.init();
     }
 
     createDefaultImage() {
-        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjY2NmZmO3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3R5bGU9InN0b3AtY29sb3I6IzMzMzNjYztzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMDAwMDk5O3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgCiAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjZ3JhZGllbnQpIi8+CiAgCiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iI2ZmNjY2NiIgb3BhY2l0eT0iMC44Ii8+CiAgPGNpcmNsZSBjeD0iMzAwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iIzY2ZmY2NiIgb3BhY2l0eT0iMC44Ii8+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSI2MCIgZmlsbD0iI2ZmZmY2NiIgb3BhY2l0eT0iMC44Ii8+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMzAwIiByPSI0MCIgZmlsbD0iI2ZmNjZmZiIgb3BhY2l0eT0iMC44Ii8+CiAgPGNpcmNsZSBjeD0iMzAwIiBjeT0iMzAwIiByPSI0MCIgZmlsbD0iIzY2ZmZmZiIgb3BhY2l0eT0iMC44Ci8+CiAgCiAgPHRleHQgeD0iMjAwIiB5PSI2MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZmZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UEFSVElDTEU8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIzNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkVGRkVDVDwvdGV4dD4KPC9zdmc+Cg==';
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        const size = 200;
+        tempCanvas.width = size;
+        tempCanvas.height = size;
+
+        const gradient = tempCtx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#ff0000');
+        gradient.addColorStop(1, '#0000ff');
+
+        tempCtx.fillStyle = gradient;
+        tempCtx.fillRect(0, 0, size, size);
+
+        tempCtx.fillStyle = 'white';
+        tempCtx.font = 'bold 30px Arial';
+        tempCtx.textAlign = 'center';
+        tempCtx.textBaseline = 'middle';
+        tempCtx.fillText('P', size / 2, size / 2);
+
+        return tempCanvas.toDataURL();
     }
 
     init() {
@@ -42,10 +66,32 @@ class ParticleCanvas {
         this.loadImage();
     }
 
+    _parseValue(value) {
+        if (typeof value === 'string') {
+            const match = value.match(/^(\d+)(px|vw|vh|%)$/);
+            if (match) {
+                return { value: parseInt(match[1]), unit: match[2] };
+            }
+        }
+        return { value, unit: 'px' };
+    }
+
+    _convertToPx(value) {
+        const { value: parsedValue, unit } = this._parseValue(value);
+        if (unit === 'vw') {
+            return (parsedValue / 100) * window.innerWidth;
+        } else if (unit === 'vh') {
+            return (parsedValue / 100) * window.innerHeight;
+        } else if (unit === '%') {
+            return (parsedValue / 100) * this.container.clientWidth;
+        }
+        return parsedValue;
+    }
+
     createCanvas() {
         this.canvas = document.createElement('canvas');
-        this.canvas.width = this.config.width;
-        this.canvas.height = this.config.height;
+        this.canvas.width = this._convertToPx(this.config.width);
+        this.canvas.height = this._convertToPx(this.config.height);
         this.canvas.style.display = 'block';
         this.canvas.style.maxWidth = '100%';
         this.canvas.style.height = 'auto';
@@ -63,11 +109,11 @@ class ParticleCanvas {
         };
         this.canvas.addEventListener('mousemove', this._onMouseMove);
 
-        this._onMouseOut = () => {
+        this._onMouseLeave = () => {
             this.mouse.active = false;
             this.vortex.active = false;
         };
-        this.canvas.addEventListener('mouseout', this._onMouseOut);
+        this.canvas.addEventListener('mouseleave', this._onMouseLeave);
 
         this._onClick = (e) => {
             const rect = this.canvas.getBoundingClientRect();
@@ -83,6 +129,16 @@ class ParticleCanvas {
             }
         };
         this.canvas.addEventListener('click', this._onClick);
+
+        this._onResize = () => {
+            const width = this._parseValue(this.config.width);
+            const height = this._parseValue(this.config.height);
+
+            if (width.unit !== 'px' || height.unit !== 'px') {
+                this.updateConfig({});
+            }
+        };
+        window.addEventListener('resize', this._onResize);
     }
 
     loadImage() {
@@ -404,8 +460,8 @@ class ParticleCanvas {
         }
 
         if (newOptions.width !== undefined || newOptions.height !== undefined) {
-            this.canvas.width = this.config.width;
-            this.canvas.height = this.config.height;
+            this.canvas.width = this._convertToPx(this.config.width);
+            this.canvas.height = this._convertToPx(this.config.height);
             this.initParticles();
         }
     }
@@ -414,8 +470,9 @@ class ParticleCanvas {
         this.stopAnimation();
         if (this.canvas && this.canvas.parentNode) {
             this.canvas.removeEventListener('mousemove', this._onMouseMove);
-            this.canvas.removeEventListener('mouseout', this._onMouseOut);
+            this.canvas.removeEventListener('mouseleave', this._onMouseLeave);
             this.canvas.removeEventListener('click', this._onClick);
+            window.removeEventListener('resize', this._onResize);
             this.canvas.parentNode.removeChild(this.canvas);
         }
         this.particles = [];
@@ -448,11 +505,11 @@ export function createParticleCanvas(containerElement, options = {}) {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { createParticleCanvas, ParticleCanvas };
+    module.exports = { createParticleCanvas, ParticleCanvas, presets };
 } else if (typeof define === 'function' && define.amd) {
     define([], function () {
-        return { createParticleCanvas, ParticleCanvas };
+        return { createParticleCanvas, ParticleCanvas, presets };
     });
 } else if (typeof window !== 'undefined') {
-    window.ParticleCanvas = { createParticleCanvas, ParticleCanvas };
+    window.ParticleCanvas = { createParticleCanvas, ParticleCanvas, presets };
 }
