@@ -1,17 +1,35 @@
 {
   "name": "package-particlefx",
-  "version": "1.2.1",
+  "private": false,
+  "version": "1.3.0",
   "description": "A lightweight, framework-agnostic JavaScript library that renders interactive particle-based image hover effects using HTML5 canvas. Customize particle behavior with options like gravity, noise, mouse force, and more. Easily integrate into React, Vue, or plain HTML projects by passing a DOM container element.",
-  "main": "index.js",
-  "module": "index.js",
-  "types": "index.d.ts",
   "type": "module",
+  "main": "./dist/package-particlefx.umd.js",
+  "module": "./dist/package-particlefx.es.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "index.js",
-    "index.d.ts",
-    "README.md",
-    "LICENSE"
+    "dist"
   ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "serve": "vite preview",
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@typescript-eslint/parser": "^8.39.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0",
+    "vite": "^7.0.6"
+  },
   "keywords": [
     "canvas",
     "particles",
@@ -41,9 +59,6 @@
     "url": "https://github.com/Anmol-TheDev/package-particlefx/issues"
   },
   "homepage": "https://github.com/Anmol-TheDev/package-particlefx#readme",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "engines": {
     "node": ">=12.0.0"
   },
@@ -52,10 +67,5 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ],
-  "devDependencies": {
-    "@types/node": "^18.0.0"
-  },
-  "peerDependencies": {},
-  "dependencies": {}
+  ]
 }
