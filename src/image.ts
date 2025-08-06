@@ -28,29 +28,29 @@ export function createDefaultImage(): string {
   // Add particle effect dots
   tempCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
   for (let i = 0; i < 30; i++) {
-    const x = Math.random() * size;
-    const y = Math.random() * size;
+    const drawX = Math.random() * size;
+    const drawY = Math.random() * size;
     const radius = Math.random() * 2 + 0.5;
 
     tempCtx.beginPath();
-    tempCtx.arc(x, y, radius, 0, Math.PI * 2);
+    tempCtx.arc(drawX, drawY, radius, 0, Math.PI * 2);
     tempCtx.fill();
   }
 
   // Add some glowing particles
   tempCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
   for (let i = 0; i < 10; i++) {
-    const x = Math.random() * size;
-    const y = Math.random() * size;
+    const drawX = Math.random() * size;
+    const drawY = Math.random() * size;
     const radius = Math.random() * 4 + 1;
 
     // Create glow effect
     const glowGradient = tempCtx.createRadialGradient(
-      x,
-      y,
+      drawX,
+      drawY,
       0,
-      x,
-      y,
+      drawX,
+      drawY,
       radius * 3
     );
     glowGradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
@@ -59,13 +59,13 @@ export function createDefaultImage(): string {
 
     tempCtx.fillStyle = glowGradient;
     tempCtx.beginPath();
-    tempCtx.arc(x, y, radius * 3, 0, Math.PI * 2);
+    tempCtx.arc(drawX, drawY, radius * 3, 0, Math.PI * 2);
     tempCtx.fill();
 
     // Core particle
     tempCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     tempCtx.beginPath();
-    tempCtx.arc(x, y, radius, 0, Math.PI * 2);
+    tempCtx.arc(drawX, drawY, radius, 0, Math.PI * 2);
     tempCtx.fill();
   }
 

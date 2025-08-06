@@ -337,63 +337,75 @@ class ParticleCanvas {
     filter: 'none' | 'grayscale' | 'sepia' | 'invert',
     hueRotation: number
   ): [number, number, number, number] {
-    let r = color[0];
-    let g = color[1];
-    let b = color[2];
-    const a = color[3];
+    let red = color[0];
+    let green = color[1];
+    let blue = color[2];
+    const alpha = color[3];
 
     switch (filter) {
       case 'grayscale':
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-        r = g = b = gray;
+        const gray = 0.299 * red + 0.587 * green + 0.114 * blue;
+        red = green = blue = gray;
         break;
       case 'sepia':
-        const tr = Math.min(255, 0.393 * r + 0.769 * g + 0.189 * b);
-        const tg = Math.min(255, 0.349 * r + 0.686 * g + 0.168 * b);
-        const tb = Math.min(255, 0.272 * r + 0.534 * g + 0.131 * b);
-        r = tr;
-        g = tg;
-        b = tb;
+        const tempRed = Math.min(
+          255,
+          0.393 * red + 0.769 * green + 0.189 * blue
+        );
+        const tempGreen = Math.min(
+          255,
+          0.349 * red + 0.686 * green + 0.168 * blue
+        );
+        const tempBlue = Math.min(
+          255,
+          0.272 * red + 0.534 * green + 0.131 * blue
+        );
+        red = tempRed;
+        green = tempGreen;
+        blue = tempBlue;
         break;
       case 'invert':
-        r = 255 - r;
-        g = 255 - g;
-        b = 255 - b;
+        red = 255 - red;
+        green = 255 - green;
+        blue = 255 - blue;
         break;
       default:
         break;
     }
 
     if (hueRotation !== 0) {
-      r /= 255;
-      g /= 255;
-      b /= 255;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      let h = 0;
-      let s = 0;
-      const l = (max + min) / 2;
+      red /= 255;
+      green /= 255;
+      blue /= 255;
+      const max = Math.max(red, green, blue);
+      const min = Math.min(red, green, blue);
+      let hue = 0;
+      let saturation = 0;
+      const lightness = (max + min) / 2;
 
       if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        const colorDifference = max - min;
+        saturation =
+          lightness > 0.5
+            ? colorDifference / (2 - max - min)
+            : colorDifference / (max + min);
         switch (max) {
-          case r:
-            h = (g - b) / d + (g < b ? 6 : 0);
+          case red:
+            hue = (green - blue) / colorDifference + (green < blue ? 6 : 0);
             break;
-          case g:
-            h = (b - r) / d + 2;
+          case green:
+            hue = (blue - red) / colorDifference + 2;
             break;
-          case b:
-            h = (r - g) / d + 4;
+          case blue:
+            hue = (red - green) / colorDifference + 4;
             break;
         }
-        h /= 6;
+        hue /= 6;
       }
 
-      h = (h * 360 + hueRotation) % 360;
-      if (h < 0) h += 360;
-      h /= 360;
+      hue = (hue * 360 + hueRotation) % 360;
+      if (hue < 0) hue += 360;
+      hue /= 360;
 
       const hue2rgb = (p: number, q: number, t: number) => {
         if (t < 0) t += 1;
@@ -404,18 +416,21 @@ class ParticleCanvas {
         return p;
       };
 
-      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      const p = 2 * l - q;
-      r = hue2rgb(p, q, h + 1 / 3);
-      g = hue2rgb(p, q, h);
-      b = hue2rgb(p, q, h - 1 / 3);
+      const q =
+        lightness < 0.5
+          ? lightness * (1 + saturation)
+          : lightness + saturation - lightness * saturation;
+      const p = 2 * lightness - q;
+      red = hue2rgb(p, q, hue + 1 / 3);
+      green = hue2rgb(p, q, hue);
+      blue = hue2rgb(p, q, hue - 1 / 3);
 
-      r = Math.round(r * 255);
-      g = Math.round(g * 255);
-      b = Math.round(b * 255);
+      red = Math.round(red * 255);
+      green = Math.round(green * 255);
+      blue = Math.round(blue * 255);
     }
 
-    return [r, g, b, a];
+    return [red, green, blue, alpha];
   }
 
   private applyClickForce(clickX: number, clickY: number) {
@@ -506,7 +521,7 @@ class ParticleCanvas {
       this.canvas.removeEventListener('mousemove', this._onMouseMove);
       this.canvas.removeEventListener('mouseleave', this._onMouseLeave);
       this.canvas.removeEventListener('click', this._onClick);
-      window.removeEventListener('resize', this.onresize);
+      window.removeEventListener('resize', this._onResize);
       this.canvas.parentNode.removeChild(this.canvas);
     }
     this.particles = [];
@@ -541,6 +556,26 @@ export function createParticleCanvas(
   }
 
   return new ParticleCanvas(element, options);
+}
+
+declare global {
+  interface Window {
+    ParticleCanvas: {
+      createParticleCanvas: typeof createParticleCanvas;
+      ParticleCanvas: typeof ParticleCanvas;
+      presets: typeof presets;
+    };
+  }
+}
+
+declare global {
+  interface Window {
+    ParticleCanvas: {
+      createParticleCanvas: typeof createParticleCanvas;
+      ParticleCanvas: typeof ParticleCanvas;
+      presets: typeof presets;
+    };
+  }
 }
 
 if (typeof window !== 'undefined') {
