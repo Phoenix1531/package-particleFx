@@ -183,4 +183,17 @@ MIT © Anmol Singh
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Here’s how you can get started:
+
+1.  **Fork the repository** and clone it to your local machine.
+2.  **Create a new branch** for your changes:
+    ```bash
+    git checkout -b my-feature-branch
+    ```
+3.  **Link the package** to a local project for testing:
+    - In this project's directory, run `npm link`.
+    - In your other project's directory, run `npm link package-particlefx`.
+4.  **Make your changes** and commit them with a clear message.
+5.  **Push your branch** and open a Pull Request.
+
+Please feel free to submit a Pull Request!
