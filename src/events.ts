@@ -1,6 +1,9 @@
 import { ParticleCanvas } from './index';
 import { parseValue } from './utils';
 import { applyClickForce } from './particle';
+import { debounce } from './utils';
+
+const resizeHandlers = new WeakMap<ParticleCanvas, () => void>();
 
 export function setupEventListeners(
   instance: ParticleCanvas,
@@ -9,7 +12,10 @@ export function setupEventListeners(
   canvas.addEventListener('mousemove', (e) => onMouseMove(e, instance));
   canvas.addEventListener('mouseleave', () => onMouseLeave(instance));
   canvas.addEventListener('click', (e) => onClick(e, instance));
-  window.addEventListener('resize', () => onResize(instance));
+
+  const debouncedResize = debounce(() => onResize(instance), 300);
+  resizeHandlers.set(instance, debouncedResize);
+  window.addEventListener('resize', debouncedResize);
 }
 
 export function removeEventListeners(
@@ -19,7 +25,12 @@ export function removeEventListeners(
   canvas.removeEventListener('mousemove', (e) => onMouseMove(e, instance));
   canvas.removeEventListener('mouseleave', () => onMouseLeave(instance));
   canvas.removeEventListener('click', (e) => onClick(e, instance));
-  window.removeEventListener('resize', () => onResize(instance));
+
+  const handler = resizeHandlers.get(instance);
+  if (handler) {
+    window.removeEventListener('resize', handler);
+    resizeHandlers.delete(instance);
+  }
 }
 
 function onMouseMove(e: MouseEvent, instance: ParticleCanvas) {

@@ -68,35 +68,6 @@ This document outlines potential improvements and new features for the `package-
     }
     ```
 
-### 3. Performance Optimization (Debounce Resize)
-
-*   **What**: Debounce the `onResize` event handler.
-*   **Why**: The `resize` event can fire dozens of times per second while a user is resizing their window, causing performance issues due to repeated re-initialization of the canvas and particles.
-*   **How**:
-    1.  Create a simple `debounce` utility function.
-    2.  Wrap the `onResize` handler in the `setupEventListeners` function with this debounce function.
-
-    ```typescript
-    // src/utils.ts
-    export function debounce(func: (...args: any[]) => void, delay: number) {
-      let timeout: number;
-      return (...args: any[]) => {
-        clearTimeout(timeout);
-        timeout = window.setTimeout(() => func(...args), delay);
-      };
-    }
-
-    // src/events.ts
-    import { debounce } from './utils';
-
-    export function setupEventListeners(...) {
-      // ...
-      window.addEventListener('resize', debounce(() => onResize(instance), 250));
-    }
-    ```
-
----
-
 ## New Features
 
 ### 1. More Particle Shapes

@@ -19,3 +19,13 @@ export function convertToPx(value: string | number, container: HTMLElement) {
   }
   return parsedValue;
 }
+
+export function debounce<T extends (...args: any[]) => void>(fn: T, wait = 200) {
+  let timeout: number | undefined;
+  return (...args: Parameters<T>) => {
+    if (timeout !== undefined) {
+      window.clearTimeout(timeout);
+    }
+    timeout = window.setTimeout(() => fn(...args), wait);
+  };
+}
