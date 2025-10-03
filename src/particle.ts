@@ -87,7 +87,8 @@ export function drawParticle(
   const filteredColor = applyFilter(
     origin.color,
     config.filter as 'none' | 'grayscale' | 'sepia' | 'invert',
-    config.hueRotation as number
+    config.hueRotation as number,
+    config.brightness as number // This is the new line you need to add
   );
   ctx.fillStyle = `rgba(${filteredColor[0]}, ${filteredColor[1]}, ${filteredColor[2]}, ${filteredColor[3] / 255})`;
 
@@ -119,7 +120,8 @@ export function drawParticle(
 export function applyFilter(
   color: [number, number, number, number],
   filter: 'none' | 'grayscale' | 'sepia' | 'invert',
-  hueRotation: number
+  hueRotation: number,
+  brightness: number // The new brightness parameter is added here
 ): [number, number, number, number] {
   let red = color[0];
   let green = color[1];
@@ -209,6 +211,13 @@ export function applyFilter(
     red = Math.round(red * 255);
     green = Math.round(green * 255);
     blue = Math.round(blue * 255);
+  }
+
+  // This is the new block that applies the brightness correction
+  if (brightness !== 1) {
+    red = Math.min(255, red * brightness);
+    green = Math.min(255, green * brightness);
+    blue = Math.min(255, blue * brightness);
   }
 
   return [red, green, blue, alpha];

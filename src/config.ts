@@ -6,7 +6,10 @@ export function createConfig(
   options: ParticleCanvasOptions
 ): ParticleCanvasOptions {
   const presetName = options.preset;
-  const presetConfig = presetName ? presets[presetName] : {};
+  // This is the line to change
+  const presetConfig: Partial<ParticleCanvasOptions> = presetName
+    ? presets[presetName]
+    : {};
 
   const defaultConfig: ParticleCanvasOptions = {
     particleGap: 4,
@@ -21,6 +24,7 @@ export function createConfig(
     filter: 'none',
     particleShape: 'square',
     vortexMode: false,
+   maxParticles: 30000, 
   };
 
   return { ...defaultConfig, ...presetConfig, ...options };

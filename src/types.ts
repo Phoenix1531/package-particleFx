@@ -1,3 +1,4 @@
+
 export interface ParticleCanvasOptions {
   particleGap?: number;
   mouseForce?: number;
@@ -12,6 +13,7 @@ export interface ParticleCanvasOptions {
   particleShape?: 'square' | 'circle' | 'triangle';
   vortexMode?: boolean;
   preset?: 'fireworks' | 'snow' | 'galaxy' | 'rain';
+  maxParticles?: number;
 }
 
 export interface Particle {
