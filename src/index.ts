@@ -51,68 +51,81 @@ export class ParticleCanvas {
     this.img.src = this.config.imageSrc as string;
   }
 
-  private initParticles() {
-    if (!this.canvas || !this.ctx) return;
+   private initParticles() {
+  if (!this.canvas || !this.ctx) return;
 
-    this.particles = [];
-    this.origins = [];
+  this.particles = [];
+  this.origins = [];
 
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    if (!tempCtx) return;
+  const tempCanvas = document.createElement('canvas');
+  const tempCtx = tempCanvas.getContext('2d');
+  if (!tempCtx) return;
 
-    tempCanvas.width = this.canvas.width;
-    tempCanvas.height = this.canvas.height;
+  tempCanvas.width = this.canvas.width;
+  tempCanvas.height = this.canvas.height;
+  tempCtx.drawImage(this.img, 0, 0, this.canvas.width, this.canvas.height);
 
-    tempCtx.drawImage(this.img, 0, 0, this.canvas.width, this.canvas.height);
+  const imageData = tempCtx.getImageData(
+    0,
+    0,
+    this.canvas.width,
+    this.canvas.height
+  );
+  const data = imageData.data;
 
-    const imageData = tempCtx.getImageData(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height
-    );
-    const data = imageData.data;
-
+  const potentialOrigins: Origin[] = [];
+  for (
+    let y = 0;
+    y < this.canvas.height;
+    y += this.config.particleGap as number
+  ) {
     for (
       let x = 0;
       x < this.canvas.width;
       x += this.config.particleGap as number
     ) {
-      for (
-        let y = 0;
-        y < this.canvas.height;
-        y += this.config.particleGap as number
-      ) {
-        const index = (x + y * this.canvas.width) * 4;
-        const alpha = data[index + 3];
+      const index = (x + y * this.canvas.width) * 4;
+      const alpha = data[index + 3];
 
-        if (alpha > 0) {
-          const origin: Origin = {
-            x: x,
-            y: y,
-            color: [data[index], data[index + 1], data[index + 2], alpha],
-          };
-
-          const particle: Particle = {
-            x: x + (Math.random() - 0.5) * 100,
-            y: y + (Math.random() - 0.5) * 100,
-            vx: (Math.random() - 0.5) * 2,
-            vy: (Math.random() - 0.5) * 2,
-            targetX: x,
-            targetY: y,
-            isDead: false,
-          };
-
-          this.origins.push(origin);
-          this.particles.push(particle);
-        }
+      if (alpha > 0) {
+        potentialOrigins.push({
+          x: x,
+          y: y,
+          color: [data[index], data[index + 1], data[index + 2], alpha],
+        });
       }
     }
-
-    this.speed = Math.log(this.particles.length) / 10;
-    this.gravityFactor = 1 - (this.config.gravity as number) * this.speed;
   }
+
+  let finalOrigins = potentialOrigins;
+  const maxParticles = this.config.maxParticles as number;
+
+  if (potentialOrigins.length > maxParticles) {
+    // Shuffle the array to get a random sample
+    for (let i = potentialOrigins.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [potentialOrigins[i], potentialOrigins[j]] = [
+        potentialOrigins[j],
+        potentialOrigins[i],
+      ];
+    }
+    finalOrigins = potentialOrigins.slice(0, maxParticles);
+  }
+  
+  this.origins = finalOrigins;
+  this.particles = this.origins.map(origin => ({
+    x: origin.x + (Math.random() - 0.5) * 100,
+    y: origin.y + (Math.random() - 0.5) * 100,
+    vx: (Math.random() - 0.5) * 2,
+    vy: (Math.random() - 0.5) * 2,
+    targetX: origin.x,
+    targetY: origin.y,
+    isDead: false,
+  }));
+
+  this.speed = Math.log(this.particles.length) / 10;
+  this.gravityFactor = 1 - (this.config.gravity as number) * this.speed;
+}
 
   private animate = () => {
     if (!this.ctx || !this.canvas) return;
