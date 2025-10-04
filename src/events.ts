@@ -20,7 +20,7 @@ export function setupEventListeners(
     mousemove: (e: MouseEvent) => onMouseMove(e, instance),
     mouseleave: () => onMouseLeave(instance),
     click: (e: MouseEvent) => onClick(e, instance),
-    resize: debounce(() => onResize(instance), 300),
+    resize: debounce(() => onResize(instance), 200),
   };
 
   eventHandlers.set(instance, handlers);
